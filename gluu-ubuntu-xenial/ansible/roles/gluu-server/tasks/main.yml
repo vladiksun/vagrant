@@ -1,0 +1,76 @@
+---
+
+- name: Add ubuntu universe repo
+  command: add-apt-repository universe
+
+- name: Update and upgrade apt packages
+  apt:
+      upgrade: yes
+      update_cache: yes
+      #cache_valid_time: 86400 #One day
+
+- name: Install curl
+  apt:
+      name: curl
+      state: present
+
+- name: Install mc
+  apt:
+      name: mc
+      state: present
+
+- name: Add Gluu Repository
+  apt_repository:
+      repo: deb https://repo.gluu.org/ubuntu/ xenial main
+      state: present
+      filename: gluu-repo
+
+- name: Add Gluu GPG Key
+  apt_key:
+      url: https://repo.gluu.org/ubuntu/gluu-apt.key
+      state: present
+
+- name: Install Gluu server
+  apt:
+      name: "{{gluu_version}}"
+      allow_unauthenticated: yes
+      state: present
+
+- name: Collect facts about system services
+  service_facts:
+  register: services_state
+
+- name: Debug
+  debug:
+      var: services_state.ansible_facts.services['{{gluu_service_name}}']
+
+- name: Stop Service
+  service:
+      name: "{{gluu_service}}"
+      state: stopped
+
+- name: Start Service
+  service:
+      name: "{{gluu_service}}"
+      state: started
+
+- name: Enable Service
+  service:
+        name: "{{gluu_service}}"
+        enabled: yes
+
+#- name: Copy installation configuration
+#  template:
+#    src: opt/gluu/install/community-edition-setup/setup.properties.j2
+#    dest: /opt/{{gluu_service}}/install/community-edition-setup/setup.properties
+
+#- name: Run ./setup.py
+#  command: ssh -o IdentityFile=/etc/gluu/keys/gluu-console -o Port=60022 -o LogLevel=QUIET -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubKeyAuthentication=yes root@localhost "cd /install/community-edition-setup && ./setup.py -s -n -f setup.properties"
+
+#- name: Update etc/hosts
+#  lineinfile:
+#    path: /etc/hosts
+#    state: present
+#    regexp: '{{server_ip_pattern}}'
+#    line: '{{server_ip}}  {{server_hostname}}'
+
