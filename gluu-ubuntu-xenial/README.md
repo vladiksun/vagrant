@@ -20,6 +20,9 @@ vagrant up
 
 #####7. Setup Gluu server
 ```
+# ssh to VM
+vagrant ssh
+
 # check the server is up
 sudo service gluu-server-3.1.6 status
 
