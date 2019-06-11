@@ -34,11 +34,7 @@ Follow the Gluu server instructions.
 
 Create a hostname mapping in `etc/hosts` (Linux) or `C:\Windows\System32\drivers\etc\hosts` (Windows):
 
-Next, login to the Gluu UI at https://gluu.local, and authenticate with the following credentials:
-```
-username: admin
-password: admin123
-```
+Next, login to the Gluu UI at https://gluu.local, and authenticate with the credentials you provided while setting up the server
 
 ## Configure SAML
 [Gluu Documentation](https://gluu.org/docs/ce/admin-guide/saml/)
