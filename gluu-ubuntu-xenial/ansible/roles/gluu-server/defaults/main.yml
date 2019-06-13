@@ -1,9 +1,32 @@
 ---
-server_ip: 
-server_hostname:
-ldap_pass:
+gluu_version: 3.1.6
+gluu_version_full: 3.1.6.sp1
 
-cert_org_name: 
-cert_country_code: 
-cert_city: 
-cert_state: 
+
+server_ip:
+server_hostname:
+
+
+gluu_modules:
+  - oxauth
+  - oxtrust
+  - ldap
+  - httpd
+  - saml
+  - oxauth-rp
+  - passport
+
+
+gluu_ldap_server: opendj
+gluu_ldap_password: admin123
+gluu_inum_base:
+gluu_inum_org:
+gluu_inum_appliance:
+
+gluu_certificate_properties:
+  org_name: AwesomeOrganization
+  country_code: CA
+  city: AwesomeCity
+  state: AwesomeState
+
+gluu_admin_email: support@gluu.local

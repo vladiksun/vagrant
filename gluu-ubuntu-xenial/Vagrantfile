@@ -6,26 +6,15 @@ VAGRANTFILE_API_VERSION = "2"
 # The hostname and IP mapping must exist in 
 # /etc/hosts
 
-#ip = "192.168.0.10"
-#ip_pattern = "^172\.18\.72\.120"
-
 ip = "192.168.0.10"
-ip_pattern = "^192\.168\.0\.10"
+ip_pattern = "^172\.18\.72\.120"
 hostname = "gluu.local"
-
 
 ansible_extra_vars = {
      server_ip: ip,
      server_ip_pattern: ip_pattern,
      server_hostname: hostname,
-     ldap_pass: "admin123",
-     cert_org_name: "ABC",
-     cert_country_code: "EN",
-     cert_city: "EN",
-     cert_state: "CA",
-     gluu_version: "gluu-server-3.1.6.sp1",
-     gluu_service_name: "gluu-server-3.1.6.service",
-     gluu_service: "gluu-server-3.1.6"
+     gluu_admin_email: "vladislav.bondarchuk@kofax.com"
 }
 
 
@@ -52,18 +41,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         v.memory = 8196
     end
 
-    if Vagrant::Util::Platform.windows?
-        config.vm.provision :guest_ansible do |ansible|
-          ansible.playbook = "ansible/site.yml"
-          ansible.verbose = "-vvv"
-          ansible.extra_vars = ansible_extra_vars
-        end
-    else
-        config.vm.provision :ansible do |ansible|
-          ansible.playbook = "ansible/site.yml"
-          ansible.verbose = "-vvv"
-          ansible.extra_vars = ansible_extra_vars
-        end
+        # Run ansible on the guest machine
+    config.vm.provision :guest_ansible do |ansible|
+        ansible.playbook = "ansible/site.yml"
+        ansible.verbose = "-vvv"
+        ansible.extra_vars = ansible_extra_vars
     end
 
     config.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777", "fmode=666"]

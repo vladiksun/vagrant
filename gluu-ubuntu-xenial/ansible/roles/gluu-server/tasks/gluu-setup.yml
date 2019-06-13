@@ -1,0 +1,36 @@
+---
+- name: Check if Gluu is already setup
+  stat:
+    path: /opt/gluu-server-{{ gluu_version }}/install/community-edition-setup/setup.properties.last
+  register: gluu_is_setup
+
+# Task for future LDAP schema
+#- include: pre-setup/ldap-schema.yml
+#  when: "'ldap' in gluu_modules and gluu_is_setup.stat.exists == False"
+
+- name: Collect facts about system services
+  service_facts:
+  register: services_state
+
+- name: Debug
+  debug:
+    var: services_state.ansible_facts.services['gluu-server-{{ gluu_version }}.service']
+
+- name: Copy Gluu Setup Configuration
+  template:
+    src: opt/gluu/install/community-edition-setup/setup.properties.j2
+    dest: /opt/gluu-server-{{ gluu_version }}/install/community-edition-setup/setup.properties
+  when: gluu_is_setup.stat.exists == False
+
+- name: Setup Gluu Configuration
+  command: "{{ gluu_container_command }} 'cd /install/community-edition-setup/ && ./setup.py -u -s -n -f ./setup.properties -d /install/community-edition-setup'"
+  when: gluu_is_setup.stat.exists == False
+
+- name: Get Generated Configuration - Get content
+  slurp:
+    src: /opt/gluu-server-{{ gluu_version }}/install/community-edition-setup/setup.properties.last
+  register: config_generated
+
+- name: Get Generated Configuration - Register in variable
+  set_fact:
+    gluu_default_setup_properties: "{{ config_generated['content'] | b64decode }}"

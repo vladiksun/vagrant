@@ -4,36 +4,40 @@ This configs create a Gluu server
 The VM is created with 2 CPUs and 8GB of RAM by default as recommended in the Gluu documentation. [Gluu Installation](https://gluu.org/docs/ce/installation-guide/)
 
 ## Getting Started
-#####1. Install Cygwin
+#####1. Install Cygwin ( if you prefer )
 #####2. Install Virtual box
 #####3. Install Vagrant
 #####4. Run prepare script
 ```
+# Linux
 ./prepare.sh
 ```
+```
+REM Windows
+./prepare.bat
+```
 #####5. Edit Vagrantfile as needed
+Change IP and host name if needed
 #####6. Create the Vagrant instance
-This server setup uses Ansible as a provisioning tool. The ansible tasks will install the Gluu server
+This server setup uses Ansible as a provisioning tool. 
+The ansible tasks will install the Gluu server, start it and run set up.
+Default setup is configured via \ansible\roles\gluu-server\defaults\main.yml
+```
+gluu_modules:
+  - oxauth
+  - oxtrust
+  - ldap
+  - httpd
+  - saml
+  - oxauth-rp
+  - passport
+```
+
+Run
+
 ```
 vagrant up
 ```
-
-#####7. Setup Gluu server
-```
-# ssh to VM
-vagrant ssh
-
-# check the server is up
-sudo service gluu-server-3.1.6 status
-
-# login into chroot jail
-sudo service gluu-server-3.1.6 login
-
-cd /install/community-edition-setup
-./setup.py
-```
-
-Follow the Gluu server instructions.
 
 Don’t use 127.0.0.1 or localhost for the IP and hostname. You want to be
 able to reach the Gluu Server from your laptop’s browser. Even if you don’t have
@@ -50,3 +54,15 @@ you specified or was auto-generated for you during installation.
 
 ## Configure SAML
 [Gluu Documentation](https://gluu.org/docs/ce/admin-guide/saml/)
+
+## Basic vagrant commands
+```
+# starts and provisions the vagrant environment
+vagrant up
+
+# stops the vagrant machine
+vagrant halt
+
+# stops and deletes all traces of the vagrant machine
+vagrant destroy
+```
